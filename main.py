@@ -7,6 +7,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--samples_per_class', type=int, required=True)
+parser.add_argument('--as_dataset', type=bool, default=False)
 parser.add_argument('--jobs', type=int, default=1)
 args = parser.parse_args()
 
@@ -31,10 +32,13 @@ def collect_class_images(label, dest_folder='', verbose=True):
         if nb_found_images == 0:
             err_msg = 'cannot find any image for label ' + label
             raise Exception(err_msg)
-        train_urls, test_urls = train_test_split(urls, train_size=0.8)
         class_name = label.replace(' ', '_')
-        bulk.download_thumbnails_from_urls(train_urls, dest_folder=os.path.join(dest_folder, 'train/' + class_name), verbose=False)
-        bulk.download_thumbnails_from_urls(test_urls, dest_folder=os.path.join(dest_folder, 'test/' + class_name), verbose=False)
+        if args.as_dataset:
+            train_urls, test_urls = train_test_split(urls, train_size=0.8)
+            bulk.download_thumbnails_from_urls(train_urls, dest_folder=os.path.join(dest_folder, 'train/' + class_name), verbose=False)
+            bulk.download_thumbnails_from_urls(test_urls, dest_folder=os.path.join(dest_folder, 'test/' + class_name), verbose=False)
+        else:
+            bulk.download_thumbnails_from_urls(urls, dest_folder=os.path.join(dest_folder, class_name), verbose=False)
     except Exception as e:
         print('Cannot collect', label, 'because', e)
 
