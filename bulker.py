@@ -7,7 +7,7 @@ import os
 class ImageBulker():
     def __init__(self):
         self.__imgs_per_page = 20
-        self.__google_image_search = 'http://images.google.com/images?q={}&start={}&sout=1'
+        self.__google_image_search = 'http://images.google.com/images?q={}&start={}&sout=1&tbm=isch'
         self.__extract_regex = r'\" src=\"(.*?)\"'
 
     def get_thumbnail_urls(self, keyword, size=1):
