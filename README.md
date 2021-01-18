@@ -6,6 +6,11 @@ Python script providing a simple way to download bulk of thumbnail images from G
 * enable parallel download by setting number of jobs (ie. threads);
 * organize images in a dataset, organizing downloaded data in two subfolders: train and test.
 
+### Limitations
+* it downloads only thumbnails;
+* invalid urls are skipped and not substituted.
+
+
 ## Getting started
 
 Download a copy of the project repository.
