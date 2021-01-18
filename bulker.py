@@ -39,14 +39,19 @@ class ImageBulker():
         pattern = '0' + str(len(str(nb_samples)))
         progress = ''
         for i, url in enumerate(urls):
-            data, ext = self.get_data_from_url(url)
-            basename = format(i, pattern) + ext
-            filepath = os.path.join(dest_folder, basename)
-            with open(filepath, 'wb') as file:
-                file.write(data)
-            if verbose:
-                progress = '\b' * len(progress) + '[{}/{}] {:.1%}'.format((i + 1), nb_samples, (i + 1) / nb_samples)
-                print(progress, end='')
+            try:
+                data, ext = self.get_data_from_url(url)
+                basename = format(i, pattern) + ext
+                filepath = os.path.join(dest_folder, basename)
+                with open(filepath, 'wb') as file:
+                    file.write(data)
+                if verbose:
+                    progress = '\b' * len(progress) + '[{}/{}] {:.1%}'.format((i + 1), nb_samples, (i + 1) / nb_samples)
+                    print(progress, end='', flush=True)
+            except Exception as e:
+                print('')
+                print('Skipping url', url, 'because:', e)
+                progress = ''
         if verbose:
             print('')
 
