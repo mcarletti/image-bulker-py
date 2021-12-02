@@ -5,18 +5,47 @@ import os
 
 
 class ImageBulker():
-    def __init__(self):
-        self.__imgs_per_page = 20
-        self.__google_image_search = 'http://images.google.com/images?q={}&start={}&sout=1&tbm=isch'
-        self.__extract_regex = r'\" src=\"(.*?)\"'
+    def __init__(self, engine="google"):
+        self.engine = engine
 
     def get_thumbnail_urls(self, keyword, size=1):
-        offset = self.__imgs_per_page * int(size / self.__imgs_per_page)
+        if self.engine == "google":
+            return self._get_thumbnail_urls_from_google(keyword, size)
+        elif self.engine == "duckduckgo":
+            return self._get_thumbnail_urls_from_duckduckgo(keyword, size)
+        else:
+            raise NotImplementedError()
+
+    def _get_thumbnail_urls_from_google(self, keyword, size=1):
+
+        imgs_per_page = 20
+        image_search = 'http://images.google.com/images?q={}&start={}&sout=1&tbm=isch'
+        extract_regex = r'\" src=\"(.*?)\"'
+
+        offset = imgs_per_page * int(size / imgs_per_page)
         thumbnail_urls = []
         while offset >= 0:
-            base_url = self.__google_image_search.format(keyword, offset)
+            base_url = image_search.format(keyword, offset)
             html = requests.get(base_url).content
-            urls = re.findall(self.__extract_regex, str(html))
+            urls = re.findall(extract_regex, str(html))
+            thumbnail_urls += urls
+            offset -= imgs_per_page
+        thumbnail_urls = list(set(thumbnail_urls))
+        return thumbnail_urls[:size]
+
+    def _get_thumbnail_urls_from_duckduckgo(self, keyword, size=1):
+
+        image_search = "https://duckduckgo.com/?q={}&atb=v226-1&iar=images&iax=images&ia=images"
+        extract_regex = ""
+
+        base_url = image_search.format(keyword)
+        html = requests.get(base_url).content
+
+        import pdb; pdb.set_trace()
+
+        thumbnail_urls = []
+        while len(thumbnail_urls) < size:
+            urls = re.findall(extract_regex, str(html))
             thumbnail_urls += urls
             offset -= self.__imgs_per_page
         thumbnail_urls = list(set(thumbnail_urls))
